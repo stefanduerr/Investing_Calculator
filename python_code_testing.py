@@ -33,7 +33,7 @@ command = 'mount -t vboxsf myfolder /home/myuser/myfolder'
 if platform.system() is "Windows":
     print("test")
 else:
-    bashCommand = "sudo fping < hosts.txt"
+    bashCommand = "sudo fping -s -g 10.90.12.1 10.90.12.50"
     
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
