@@ -1,6 +1,7 @@
 import datetime, time
 import platform
 import subprocess
+from threading import Thread
 
 def hosts():
     mylist = list(range(1, 51))
@@ -26,15 +27,31 @@ def clock():
 
 # # - timedelta(days=1)  =   yesterday
 
-sudoPassword = 'mypass'
-command = 'mount -t vboxsf myfolder /home/myuser/myfolder'
+import sched, time
+s = sched.scheduler(time.time, time.sleep)
+def do_something(sc): 
+    ping()
+    # do your stuff
+    sc.enter(5, 1, do_something, (sc,))
 
 
-if platform.system() is "Windows":
-    print("test")
-else:
-    bashCommand = "sudo fping -s -g 10.90.12.1 10.90.12.50"
+s.enter(5, 1, do_something, (s,))
+# s.run()
+print("test")
+
+
+def ping():
+    if platform.system() == "Windows":
+        print("No Server Environment.")
+    else:
+        bashCommand = "sudo fping -s -g 10.90.12.1 10.90.12.50"
+        
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()
+        
+ping()
+
+if __name__ == '__main__':
     
-    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
-    output, error = process.communicate()
+    Thread(target = s.run()).start()
     
