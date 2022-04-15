@@ -34,7 +34,7 @@ if platform.system() is "Windows":
     print("test")
 else:
     # bashCommand = "sudo fping < hosts.txt"
-    bashCommand = "cd .."
+    bashCommand = "htop"
     process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     
