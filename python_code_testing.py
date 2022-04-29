@@ -103,17 +103,36 @@
 # print('no interest: ' + str(no_interest))
 
 import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib.pyplot import figure
+import PySimpleGUI as sg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from textwrap import wrap
+matplotlib.use('TkAgg')
 
+switch = True
+firststart = True
 
+def draw_figure(canvas, figure):
+    
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
 
+def calc_your_income(y, monthly_invest, interest_rate):
 
+    if y.isnumeric() and monthly_invest.isnumeric() and interest_rate.isnumeric():
+        fvar = calc_interest(y, monthly_invest, interest_rate)
+        switch = True
+        return fvar
+    else:
+        print("Nan")
+        switch = False
+        return switch, switch
+    
 
-# def customize():
-#     y = input("Years: ")
-#     monthly_invest = input("Investing per month: ")
-#     interest_rate = input("Interest (default 5%): ")
-
-def calc_interest():
+def calc_interest(y, min, ira):
 
     qtest = 0
     rtest = 0
@@ -123,10 +142,13 @@ def calc_interest():
     ninv = []
     totali = []
     totaln = []
+    y = int(y)
+    min = float(min)
+    ira = (float(ira) + 100) / 100
 
-    y = 8
-    monthly_invest = 500
-    interest_rate = 1.05
+    # y = 8
+    # monthly_invest = 500
+    # interest_rate = 1.05
 
 
     x_axis = list(range(1, y+1))
@@ -134,38 +156,103 @@ def calc_interest():
         rt = (j + 1) * 12
         for i in range(rt):
             
-            qtest = qtest + monthly_invest
-            rtest = rtest + monthly_invest
+            qtest = qtest + min
+            rtest = rtest + min
 
             if (i+1) % 12 == 0:
-                rtest = rtest * interest_rate
+                rtest = rtest * ira
                 # print('iter no. ' + str(i) + ' : ' + str(rtest))
 
+        print("Money gained without investing after " + str(rt/12) + " years: " + str(qtest-(min*12)*(j+1)))
+        print("Money gained with    investing after " + str(rt/12) + " years: " + str(int(rtest-(min*12)*(j+1))))
 
-        print("Money gained without investing after " + str(rt/12) + " years: " + str(qtest-6000*(j+1)))
-        print("Money gained with    investing after " + str(rt/12) + " years: " + str(int(rtest-6000*(j+1))))
-        ninv.append(qtest-6000*(j+1))
-        inv.append(rtest-6000*(j+1))
+        # data = "Money gained with    investing after " + str(rt/12) + " years: " + str(int(rtest-(min*12)*(j+1)))
+
+        ninv.append(qtest-(min*12)*(j+1))
+        inv.append(rtest-(min*12)*(j+1))
         totaln.append(qtest)
         totali.append(rtest)
         
         qtest = 0
         rtest = 0
 
-    plt.plot(x_axis, inv, label = "Investing Revenue")
-    plt.plot(x_axis, ninv, label = "Control Group")
-    plt.xlabel('Years')
-    plt.ylabel('Money')
-    plt.legend()
-    # plt.plot(x_axis, rtest)
-    plt.show()
+    strings = ""
+    for k in range(len(inv)):
+        string = "Money gained with investing after {} years: {} € \n".format(k+1, int(inv[k]))
+        strings += string
 
-    plt.plot(x_axis, totaln, label = "Total Money Owned Without Investing")
-    plt.plot(x_axis, totali, label = "Total Money Owned With Investing")
-    plt.xlabel('Years')
-    plt.ylabel('Money')
-    plt.legend()
-    # plt.plot(x_axis, rtest)
-    plt.show()
+    data = strings
+    # global firststart
+    # if not firststart:
+    #     ax1.cla()
+    #     ax2.cla()
+    fig, (ax1, ax2) = plt.subplots(2)
+    fig.set_size_inches(6.75, 10)
+    fig.savefig('test2png.png', bbox_inches='tight', dpi=100)
+    longtitle = 'Money earned by investing {} per month for {} years with an {} % interest rate'.format(min, y, int((ira*100-100)))
+    fig.suptitle("\n".join(wrap(longtitle, 50)))
+    
+    # figure(num=1, figsize=(10, 10), dpi=80)
 
-calc_interest()
+    ax1.plot(x_axis, inv, label = "Investing Revenue")
+    ax1.plot(x_axis, ninv, label = "Control Group")
+    
+    ax1.set_xlabel('Years')
+    ax1.set_ylabel('Amount')
+    ax1.legend()
+    
+    # plt.plot(x_axis, rtest)
+    
+    # plt.figure(2)
+    ax2.plot(x_axis, totaln, label = "Total Money Owned Without Investing")
+    ax2.plot(x_axis, totali, label = "Total Money Owned With Investing")
+    ax2.set_xlabel('Years')
+    ax2.set_ylabel('Amount')
+    ax2.legend()
+    # plt.plot(x_axis, rtest)
+    # plt.show()
+    firststart = False
+    ircalc = plt.gcf()
+    return ircalc, data
+
+sg.theme('DarkBlue12')
+# calc_your_income()
+layout = [[sg.Text("xPara's Investing Calculator v1.0", font='Helvetica 15 bold'), sg.Text(size=(10,1), key='-OUTPUT-')],
+          [sg.Text('Years Investing: ', size=(12,1)), sg.Input(key='-YEARS-')],
+          [sg.Text('Monthly Amount: ', size=(12,1)), sg.Input(key='-MONTHLYI-')],
+          [sg.Text('Interest Rate: ', size=(12,1)), sg.Input(key='-INTEREST-')],
+          [sg.Text('', key='-WARNING-')],
+          [sg.Button('Show'), sg.Button('Exit'), sg.Button('Reset')],
+          [sg.Graph(50, 50, 50, key='-CANVAS-'), sg.vtop(sg.Multiline(size=(100,100), key='-MATH-', visible=False, font='Helvetica 11'))]]
+
+# Create the window
+window = sg.Window("INVESTING CALCULATOR", layout, size=(1200, 900))
+
+# Create an event loop
+while True:  # Event Loop
+    event, values = window.read()
+    print(event, values)
+    
+    if event == sg.WIN_CLOSED or event == 'Exit':
+        break
+    if event == 'Show':
+        
+        
+        window['-WARNING-'].update("Calculating...")
+        funcvar, data = calc_your_income(values['-YEARS-'], values['-MONTHLYI-'], values['-INTEREST-'])
+        if not funcvar:
+            window['-WARNING-'].update("We serve food here, Sir. (Please enter numbers!)")
+        else:
+            window['-CANVAS-'].update(visible=True)
+            if 'fig_canvas_agg' in locals():
+                fig_canvas_agg.get_tk_widget().forget()
+                plt.close('all')
+            window['-MATH-'].update(visible=True)
+            fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, funcvar)
+            window['-MATH-'].update(data)
+    if event == 'Reset':
+        fig_canvas_agg._tkcanvas.delete("all")
+        window['-MATH-'].update(visible=False)
+        window['-CANVAS-'].update(visible=False)
+
+window.close()
