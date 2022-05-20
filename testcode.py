@@ -1,3 +1,84 @@
+# import datetime, time
+# import platform
+# import subprocess
+# from threading import Thread
+# from flask import Flask
+
+# app = Flask(__name__)
+
+# def hosts():
+#     mylist = list(range(1, 51))
+#     for x in mylist:
+#         print("10.90.12." + str(x))
+
+# def compare_test():
+#     a = "abs"
+#     b = "abs"
+#     if not a is b:
+#         print('xti') 
+#     else:
+#         print('xtc')
+
+
+
+# def clock():
+#     while True:   
+#         now = datetime.now()
+#         # print (now.strftime("%m/%d/%Y %H:%M:%S"), end="", flush=True),
+#         ticktack = now.strftime("%m/%d/%Y %H:%M:%S")
+#         # print("\r", end="", flush=True),
+#         time.sleep(1)
+#         return ticktack
+
+# # - timedelta(days=1)  =   yesterday
+
+# import sched, time
+# s = sched.scheduler(time.time, time.sleep)
+# def ping_daily(sc): 
+#     ping()
+#     # do your stuff
+#     sc.enter(5, 1, ping_daily, (sc,))
+
+
+# s.enter(5, 1, ping_daily, (s,))
+# s.run()
+
+
+# def ping():
+#     if platform.system() == "Windows":
+#         print("No Server Environment.")
+#     else:
+#         bashCommand = "sudo fping -s -g 10.90.12.1 10.90.12.50"
+        
+#         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+#         output, error = process.communicate()
+        
+# # ping()
+
+# import time
+# import atexit
+# from datetime import datetime, timedelta
+# from apscheduler.schedulers.background import BackgroundScheduler
+
+
+# print("test_1")
+# atm = datetime.now() + timedelta(seconds=30)
+# def print_date_time(text):
+#     print(text, time.strftime("%A, %d. %B %Y %I:%M:%S %p"))
+
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(func=print_date_time, trigger="date", run_date=atm, args=['Job execution start: '])
+# scheduler.add_job(func=print_date_time, trigger="interval", seconds=2, args=["The current time is: "])
+# scheduler.start()
+
+
+# print(atm)
+# Shut down the scheduler when exiting the app
+# atexit.register(lambda: scheduler.shutdown())
+
+# if __name__ == '__main__':
+#     app.run()
+
 import math, random
 from pathlib import Path
 
