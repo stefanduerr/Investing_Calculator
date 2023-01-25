@@ -9,6 +9,7 @@ matplotlib.use('TkAgg')
 switch = True
 firststart = True
 
+# Fenster wird erstellt
 def draw_figure(canvas, figure):
     
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -23,6 +24,7 @@ def isfloat(num):
     except ValueError:
         return False
 
+# Zinsenberechnungsfunktion
 def calc_your_income(y, monthly_invest, interest_rate):
 
     if y.isnumeric() and isfloat(monthly_invest) and isfloat(interest_rate):
@@ -34,7 +36,7 @@ def calc_your_income(y, monthly_invest, interest_rate):
         switch = False
         return switch, switch
     
-
+# Zinsenberechnungsfunktion 2.0
 def calc_interest(y, min, ira):
 
     qtest = 0
@@ -49,11 +51,6 @@ def calc_interest(y, min, ira):
     min = float(min)
     ira = (float(ira) + 100) / 100
 
-    # y = 8
-    # monthly_invest = 500
-    # interest_rate = 1.05
-
-
     x_axis = list(range(1, y+1))
     for j in range(y):
         rt = (j + 1) * 12
@@ -64,14 +61,11 @@ def calc_interest(y, min, ira):
 
             if (i+1) % 12 == 0:
                 rtest = rtest * ira
-                # print('iter no. ' + str(i) + ' : ' + str(rtest))
 
         print("Money gained without investing after " + str(rt/12) + " years: " + str(round(qtest, 2)))
         print("Money gained with    investing after " + str(rt/12) + " years: " + str(float(rtest-(min*12)*(j+1))))
         test = 1.234223
         print(round(test, 2))
-
-        # data = "Money gained with    investing after " + str(rt/12) + " years: " + str(int(rtest-(min*12)*(j+1)))
 
         ninv.append(qtest-(min*12)*(j+1))
         inv.append(rtest-(min*12)*(j+1))
@@ -100,9 +94,6 @@ def calc_interest(y, min, ira):
 
     print('{:,}'.format(round(totali[0]), 2))
     for k in range(len(inv)):
-        
-        #     years_amount.append([k+1, str('{:,}'.format(round(totaln[k]), 2)) + ' €', str('{:,}'.format(round(totali[k]/1000000), 2)) + ' Mia. €', str('{:,}'.format(round(inv[k]), 2)) + ' €'])
-        # else:
  
         value = int(totali[k])
         print('val: ' + str(value))
@@ -120,17 +111,11 @@ def calc_interest(y, min, ira):
         strings += string
 
     data = years_amount
-    # global firststart
-    # if not firststart:
-    #     ax1.cla()
-    #     ax2.cla()
     fig, (ax1, ax2) = plt.subplots(2)
     fig.set_size_inches(6.75, 10)
     fig.savefig('test2png.png', bbox_inches='tight', dpi=100)
     longtitle = 'Money earned by investing {} per month for {} years with a {} % interest rate'.format(min, y, round(ira*100-100, 2))
     fig.suptitle("\n".join(wrap(longtitle, 50)))
-    
-    # figure(num=1, figsize=(10, 10), dpi=80)
 
     ax1.plot(x_axis, inv, label = "Investing Revenue")
     ax1.plot(x_axis, ninv, label = "Control Group")
@@ -139,21 +124,16 @@ def calc_interest(y, min, ira):
     ax1.set_ylabel('Amount')
     ax1.legend()
     
-    # plt.plot(x_axis, rtest)
-    
-    # plt.figure(2)
     ax2.plot(x_axis, totaln, label = "Total Money Owned Without Investing")
     ax2.plot(x_axis, totali, label = "Total Money Owned With Investing")
     ax2.set_xlabel('Years')
     ax2.set_ylabel('Amount')
     ax2.legend()
-    # plt.plot(x_axis, rtest)
-    # plt.show()
+
     firststart = False
     ircalc = plt.gcf()
     return ircalc, data
 
-# sg.vtop(sg.Multiline(size=(10,10), key='-MATH-', visible=False, font='Helvetica 11')),
 sg.theme('DarkBlue12')
 testlist = [[1,2,3,4],[1,3,4,5]]
 headings = ['Years', 'Wealth Without Investing', 'Wealth With Investing', 'Revenue By Investing']
@@ -202,7 +182,7 @@ while True:  # Event Loop
             
             fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, funcvar)
             
-            window['-TABLE-'].update(visible=True)# window['-MATH-'].update(data)
+            window['-TABLE-'].update(visible=True)
             window['-TABLE-'].update(data)
     if event == 'Reset':
         window['-CANVAS-'].update(visible=False)
